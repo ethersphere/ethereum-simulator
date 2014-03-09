@@ -20,11 +20,11 @@ loadData({ sim: sim })
 // re-enable animation delay for actions taken by the user
 viewSetttings.animatationDelay = true
 
-},{"./index.js":2,"./lib/initialData.js":5,"./lib/view.js":8}],2:[function(require,module,exports){
+},{"./index.js":2,"./lib/initialData.js":5,"./lib/view.js":9}],2:[function(require,module,exports){
 module.exports = {
   Simulator: require('./lib/simulator.js')
 }
-},{"./lib/simulator.js":6}],3:[function(require,module,exports){
+},{"./lib/simulator.js":7}],3:[function(require,module,exports){
 var Uuid = require('hat')
 
 module.exports = Block
@@ -50,7 +50,7 @@ Block.prototype.toJSON = function() {
     runContracts: this.runContracts,
   }
 }
-},{"hat":27}],4:[function(require,module,exports){
+},{"hat":28}],4:[function(require,module,exports){
 var Uuid = require('hat')
 
 module.exports = Contract
@@ -78,7 +78,7 @@ Contract.prototype.toJSON = function() {
     address: this.address,
   }
 }
-},{"hat":27}],5:[function(require,module,exports){
+},{"hat":28}],5:[function(require,module,exports){
 (function (Buffer){
 var fs = require('fs')
 
@@ -144,7 +144,42 @@ module.exports = function(deps) {
 
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":29,"fs":28}],6:[function(require,module,exports){
+},{"buffer":30,"fs":29}],6:[function(require,module,exports){
+module.exports = innerText;
+
+function innerText(el) {
+    var selection = window.getSelection(),
+        ranges    = [],
+        str;
+
+    // Save existing selections.
+    for (var i = 0; i < selection.rangeCount; i++) {
+        ranges[i] = selection.getRangeAt(i);
+    }
+
+    // Deselect everything.
+    selection.removeAllRanges();
+
+    // Select `el` and all child nodes.
+    // 'this' is the element .innerText got called on
+    selection.selectAllChildren(el);
+
+    // Get the string representation of the selected nodes.
+    str = selection.toString();
+
+    // Deselect everything. Again.
+    selection.removeAllRanges();
+
+    // Restore all formerly existing selections.
+    for (var i = 0; i < ranges.length; i++) {
+        selection.addRange(ranges[i]);
+    }
+
+    // Oh look, this is what we wanted.
+    // String representation of the element, close to as rendered.
+    return str;
+}
+},{}],7:[function(require,module,exports){
 var vm = require('vm')
 var extend = require('extend')
 var clone = require('clone')
@@ -285,7 +320,7 @@ Simulator.prototype.createBlock = function(opts) {
   this.emit('block',newBlock.toJSON())
 }
 
-},{"./block.js":3,"./contract.js":4,"./transaction.js":7,"./wallet.js":9,"clone":10,"events":32,"extend":11,"vm":33}],7:[function(require,module,exports){
+},{"./block.js":3,"./contract.js":4,"./transaction.js":8,"./wallet.js":10,"clone":11,"events":33,"extend":12,"vm":34}],8:[function(require,module,exports){
 var Uuid = require('hat')
 
 module.exports = Transaction
@@ -318,11 +353,12 @@ Transaction.prototype.toJSON = function() {
     datan: this.datan,
   }
 }
-},{"hat":27}],8:[function(require,module,exports){
+},{"hat":28}],9:[function(require,module,exports){
 (function (Buffer){
 var fs = require('fs')
 var Handlebars = require('handlebars')
 var Uuid = require('hat')
+var innerText = require('./innerText.js')
 
 //
 // App Views
@@ -590,7 +626,7 @@ module.exports = function(settings) {
       sender: document.getElementById('nt-select-from').value,
       value: +document.getElementById('nt-value').value,
       fee: +document.getElementById('nt-fee').value,
-      data: document.getElementById('nt-data').textContent.split('\n'),
+      data: innerText(document.getElementById('nt-data')).split('\n'),
     }
   }
 
@@ -599,7 +635,7 @@ module.exports = function(settings) {
       author: document.getElementById('nc-select-author').value,
       value: +document.getElementById('nc-value').value,
       fee: +document.getElementById('nc-fee').value,
-      js: document.getElementById('nc-js').textContent,
+      js: innerText(document.getElementById('nc-js')),
     }
   }
 
@@ -612,7 +648,7 @@ module.exports = function(settings) {
 
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":29,"fs":28,"handlebars":26,"hat":27}],9:[function(require,module,exports){
+},{"./innerText.js":6,"buffer":30,"fs":29,"handlebars":27,"hat":28}],10:[function(require,module,exports){
 var Uuid = require('hat')
 
 module.exports = Wallet
@@ -635,7 +671,7 @@ Wallet.prototype.toJSON = function() {
     sender: this.sender,
   }
 }
-},{"hat":27}],10:[function(require,module,exports){
+},{"hat":28}],11:[function(require,module,exports){
 (function (Buffer){
 "use strict";
 
@@ -798,7 +834,7 @@ clone.clonePrototype = function(parent) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":29}],11:[function(require,module,exports){
+},{"buffer":30}],12:[function(require,module,exports){
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
 
@@ -878,7 +914,7 @@ module.exports = function extend() {
 	return target;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -916,7 +952,7 @@ Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":13,"./handlebars/compiler/ast":15,"./handlebars/compiler/base":16,"./handlebars/compiler/compiler":17,"./handlebars/compiler/javascript-compiler":18}],13:[function(require,module,exports){
+},{"./handlebars.runtime":14,"./handlebars/compiler/ast":16,"./handlebars/compiler/base":17,"./handlebars/compiler/compiler":18,"./handlebars/compiler/javascript-compiler":19}],14:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -949,7 +985,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":14,"./handlebars/exception":22,"./handlebars/runtime":23,"./handlebars/safe-string":24,"./handlebars/utils":25}],14:[function(require,module,exports){
+},{"./handlebars/base":15,"./handlebars/exception":23,"./handlebars/runtime":24,"./handlebars/safe-string":25,"./handlebars/utils":26}],15:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -1182,7 +1218,7 @@ exports.log = log;var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":22,"./utils":25}],15:[function(require,module,exports){
+},{"./exception":23,"./utils":26}],16:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -1430,7 +1466,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":22}],16:[function(require,module,exports){
+},{"../exception":23}],17:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -1446,7 +1482,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"./ast":15,"./parser":19}],17:[function(require,module,exports){
+},{"./ast":16,"./parser":20}],18:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -1917,7 +1953,7 @@ exports.precompile = precompile;function compile(input, options, env) {
 }
 
 exports.compile = compile;
-},{"../exception":22}],18:[function(require,module,exports){
+},{"../exception":23}],19:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -2914,7 +2950,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":14,"../exception":22}],19:[function(require,module,exports){
+},{"../base":15,"../exception":23}],20:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* Jison generated parser */
@@ -3433,7 +3469,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -3577,7 +3613,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":21}],21:[function(require,module,exports){
+},{"./visitor":22}],22:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -3590,7 +3626,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -3619,7 +3655,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -3791,7 +3827,7 @@ exports.program = program;function invokePartial(partial, name, context, helpers
 exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;
-},{"./base":14,"./exception":22,"./utils":25}],24:[function(require,module,exports){
+},{"./base":15,"./exception":23,"./utils":26}],25:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -3803,7 +3839,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -3888,7 +3924,7 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":24}],26:[function(require,module,exports){
+},{"./safe-string":25}],27:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -3915,7 +3951,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":12,"../dist/cjs/handlebars/compiler/printer":20,"../dist/cjs/handlebars/compiler/visitor":21,"fs":28}],27:[function(require,module,exports){
+},{"../dist/cjs/handlebars":13,"../dist/cjs/handlebars/compiler/printer":21,"../dist/cjs/handlebars/compiler/visitor":22,"fs":29}],28:[function(require,module,exports){
 var hat = module.exports = function (bits, base) {
     if (!base) base = 16;
     if (bits === undefined) bits = 128;
@@ -3979,9 +4015,9 @@ hat.rack = function (bits, base, expandBy) {
     return fn;
 };
 
-},{}],28:[function(require,module,exports){
-
 },{}],29:[function(require,module,exports){
+
+},{}],30:[function(require,module,exports){
 /**
  * The buffer module from node.js, for the browser.
  *
@@ -5094,7 +5130,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":30,"ieee754":31}],30:[function(require,module,exports){
+},{"base64-js":31,"ieee754":32}],31:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -5217,7 +5253,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	module.exports.fromByteArray = uint8ToBase64
 }())
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -5303,7 +5339,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5605,7 +5641,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 var indexOf = require('indexof');
 
 var Object_keys = function (obj) {
@@ -5745,7 +5781,7 @@ exports.createContext = Script.createContext = function (context) {
     return copy;
 };
 
-},{"indexof":34}],34:[function(require,module,exports){
+},{"indexof":35}],35:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
